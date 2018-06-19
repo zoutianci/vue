@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MVVM</title>
+</head>
+
+<body>
+    <!-- VUE 是MVVM
+    data-binding
+    tmmplate compile -->
+    <!-- 支持对{{}}的解析, template compile
+    template -> html 
+    {{key}} data {name: '喻顺武'} 回填
+    1.找坑 2.填值 -->
+    <div id="app">
+        <h3>姓名</h3>
+        <p>我的名字是{{name}}</p>
+        <h3>年龄</h3>
+        <p>{{age}}</p>
+        <div class="msg">
+            <p>
+                {{msg}}
+            </p>
+        </div>
+    </div>
+    <script>
+        class Vue {
+            constructor(opt) {
+                this.opt = opt;
+                this.root = document.querySelector(opt.el);
+                this.compile(this.root);
+            }
+            compile(node) {
+                // 遍历结点, 文本结点
+                // console.log(node.childNodes);
+                [].forEach.call(node.childNodes, child => {
+                    // 只有{{}} 才需要去做, 正则
+                    // console.log(child);
+                    if(!child.firstElementChild && /(\{)(\{)(.*)(\})(\})/.test(child.innerHTML)) {
+                        console.log(RegExp.$1,RegExp.$2,RegExp.$3,RegExp.$4,RegExp.$5)
+                        let key = RegExp.$3.trim();
+                        // child.innerHTML = this.opt.data[key];
+                        child.innerHTML = child.innerHTML.replace(/(\{)(\{)(.*)(\})(\})/,this.opt.data[key])
+                    }else if(child.firstElementChild) {this.compile(child)};
+                })
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            let options = {
+                el: '#app',
+                data: {
+                    name: '检索中...',
+                    age: 30,
+                    msg: 'vue 高手, 月薪五万',
+                }
+            }
+            new Vue(options);
+        })
+
+    </script>
+</body>
+
+</html>
